@@ -1,0 +1,2 @@
+pycyptodome;sys_platform=='Windows'
+pycrypto;sys_platform=='linux'
