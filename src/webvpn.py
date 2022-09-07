@@ -40,7 +40,7 @@ HEADERS = {
         'sec-ch-ua-platform-version': '"14.0.0"',
     }
 
-def cpu_webvpn_login(credentials):
+def cpu_webvpn_login(credentials,skip_check=False):
     s = requests.Session()
     headers = HEADERS.copy()
 
@@ -66,7 +66,11 @@ def cpu_webvpn_login(credentials):
     }
     
     response = s.post('https://webvpn.cpu.edu.cn/https/77726476706e69737468656265737421f9f30f9f372526557a1dc7af96/sso/login', params=params,headers=headers, data=data)
-    return mycookie
+    
+    if response.url == 'https://webvpn.cpu.edu.cn/portal' or skip_check:
+        return mycookie
+    else:
+        raise RuntimeError('登录失败，请检查学号密码或选择跳过验证')
 
 def web_go(url,cookie):
     import requests
@@ -77,29 +81,30 @@ def web_go(url,cookie):
     response = requests.get(url, cookies=cookies, headers=headers)
     return response
 
-def get_credentials():
+def get_credentials(force_password_input=False):
     cred = []
     try:
         with open(MYDIR + '/credentials.txt','r',encoding='utf-8') as f:
             cred = f.read().strip().split('\n')
     except FileNotFoundError:
-        pass
+        print('找不到凭证文件')
 
-    if len(cred) == 0:
+    if len(cred) == 0 or cred[0] == '':
         cred.append(input('请输入学号: '))
     else:
-        print('学号为: %s' %(cred[0]))
-    if len(cred) <= 1:
+        print('学号已由凭证文件提供: %s' %(cred[0]))
+    print('凭证文件未提供密码或设置了强制密码输入')
+    if len(cred) <= 1 or force_password_input:
         cred.append(getpass.getpass('请输入密码: '))
     else:
-        print('密码已提供')
+        print('密码已由凭证文件提供')
 
     return cred
 
 if __name__ == '__main__':
     # Test only
     url = 'https://webvpn.cpu.edu.cn/https/77726476706e69737468656265737421f3f90f9e2e3e6f1e7d0784/'
-    cred = get_credentials()
-    mycookie = cpu_webvpn_login(cred)
+    cred = get_credentials(force_password_input=False)
+    mycookie = cpu_webvpn_login(cred,skip_check=False)
     resp = web_go(url,mycookie)
     print(resp.text)
