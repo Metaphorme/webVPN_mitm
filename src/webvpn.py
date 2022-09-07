@@ -1,74 +1,42 @@
-from Crypto.Cipher import AES
-from binascii import hexlify
+import getpass
 
-KEY_ = b'wrdvpnisthebest!'
-IV_  = b'wrdvpnisthebest!'
-INST_HOSTNAME = 'webvpn.cpu.edu.cn'
-
-URL_INFO = {
-    'webvpn': {
-        'protocol': 'https',
-        'hostname': INST_HOSTNAME,
-        'port':'',
-    },
-    'target': {
-        'protocol': 'https',
-        'hostname_pln': '',
-        'port': '',
-        'uri': '/',
-    }
-}
-
-def encrypt(text_pln, key = KEY_, cfb_iv = IV_, size = 128):
-    cfb_cipher_encrypt = AES.new(key, AES.MODE_CFB, cfb_iv, segment_size = size)
-
-    message = text_pln.encode('utf-8')
-    mid = cfb_cipher_encrypt.encrypt(message)
-    res = hexlify(cfb_iv).decode('utf-8') + hexlify(mid).decode()
-
-    return res
-
-def get_url(url_info):
-    hostname_pln = url_info['target']['hostname_pln']
-    if hostname_pln != '':
-        hostname_encrypted = encrypt(hostname_pln)
+def is_exec():
+    import sys
+    if getattr(sys, 'frozen', False):
+        return True
     else:
-        return ''
+        return False
 
-    port_webvpn = str(url_info['webvpn']['port'])
-    if port_webvpn != '':
-        port_webvpn = ':' + port_webvpn
+def get_dir(myfile=__file__):
+    import os
+    if is_exec():
+        import sys
+        mydir=os.path.dirname(os.path.abspath(sys.executable))
+    else:
+        mydir=os.path.dirname(os.path.abspath(myfile))
+    return mydir
 
-    port_target = str(url_info['target']['port'])
-    if port_target != '':
-        port_target = '-' + port_target
+MYDIR = get_dir()
 
-    url = '%s://%s%s/%s%s/%s%s' %(
-        url_info['webvpn']['protocol'],
-        url_info['webvpn']['hostname'],
-        port_webvpn,
-        url_info['target']['protocol'],
-        port_target,
-        hostname_encrypted,
-        url_info['target']['uri'],
-    )
-    return url
+def get_credentials():
+    cred = []
+    try:
+        with open(MYDIR + '/credentials.txt','r',encoding='utf-8') as f:
+            cred = f.read().strip().split('\n')
+    except FileNotFoundError:
+        pass
+
+    if len(cred) == 0:
+        cred.append(input('请输入学号: '))
+    else:
+        print('学号为: %s' %(cred[0]))
+    if len(cred) <= 1:
+        cred.append(getpass.getpass('请输入密码: '))
+    else:
+        print('密码已提供')
+
+    return cred
 
 if __name__ == '__main__':
     # Test only
-    # my_url_info = URL_INFO.copy()
-    my_url_info = {
-        'webvpn': {
-            'protocol': 'https',
-            'hostname': INST_HOSTNAME,
-            'port':'',
-        },
-        'target': {
-            'protocol': 'https',
-            'hostname_pln': 'cn.bing.com',
-            'port': '443',
-            'uri': '/?mkt=zh-CN',
-        }
-    }
-    print(get_url(my_url_info))
-    
+    print(get_credentials())
