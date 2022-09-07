@@ -1,5 +1,6 @@
 import getpass
 import requests
+import os
 
 def is_exec():
     import sys
@@ -9,7 +10,6 @@ def is_exec():
         return False
 
 def get_dir(myfile=__file__):
-    import os
     if is_exec():
         import sys
         mydir=os.path.dirname(os.path.abspath(sys.executable))
@@ -83,17 +83,21 @@ def web_go(url,cookie):
 
 def get_credentials(force_password_input=False):
     cred = []
-    try:
-        with open(MYDIR + '/credentials.txt','r',encoding='utf-8') as f:
+    file_path = MYDIR + '/ddcredentials.txt'
+    if os.path.exists(file_path):
+        with open(file_path,'r',encoding='utf-8') as f:
             cred = f.read().strip().split('\n')
-    except FileNotFoundError:
+        isexist = True
+    else:
         print('找不到凭证文件')
-
+        isexist = False
+    
     if len(cred) == 0 or cred[0] == '':
         cred.append(input('请输入学号: '))
     else:
         print('学号已由凭证文件提供: %s' %(cred[0]))
-    print('凭证文件未提供密码或设置了强制密码输入')
+    if isexist:
+        print('凭证文件未提供密码或设置了强制密码输入')
     if len(cred) <= 1 or force_password_input:
         cred.append(getpass.getpass('请输入密码: '))
     else:
