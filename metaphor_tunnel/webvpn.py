@@ -1,5 +1,3 @@
-import os
-import getpass
 import requests
 
 HEADERS = {
@@ -66,6 +64,7 @@ def web_go(url,cookie):
 
 def get_credentials(file_path='credentials.txt',force_password_input=False):
     cred = []
+    import os
     if os.path.exists(file_path):
         with open(file_path,'r',encoding='utf-8') as f:
             cred = f.read().strip().split('\n')
@@ -81,6 +80,7 @@ def get_credentials(file_path='credentials.txt',force_password_input=False):
     if isexist:
         print('凭证文件未提供密码或设置了强制密码输入')
     if len(cred) <= 1 or force_password_input:
+        import getpass
         cred.append(getpass.getpass('请输入密码: '))
     else:
         print('密码已由凭证文件提供')
