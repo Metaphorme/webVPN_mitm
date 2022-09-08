@@ -1,7 +1,7 @@
 import os
 import sys
 from metaphor_tunnel import url_conversion as urlc
-from metaphor_tunnel import webvpn as wvpn
+from metaphor_tunnel import cpu_webvpn as cvpn
 
 def is_exec():
     if getattr(sys, 'frozen', False):
@@ -22,8 +22,8 @@ INST_HOSTNAME = 'webvpn.cpu.edu.cn'
 def main():
     url = urlc.get_url(urlc.get_url_info('ws://121.40.165.18:8800',INST_HOSTNAME))
     print(url)
-    # cred = wvpn.get_credentials()
-    # mycookie = wvpn.cpu_webvpn_login(cred)
+    # cred = cvpn.get_credentials()
+    # mycookie = cvpn.login(cred)
     # print(mycookie)
 
 if __name__ == '__main__':

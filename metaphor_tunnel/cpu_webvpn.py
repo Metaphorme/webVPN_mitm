@@ -22,7 +22,7 @@ HEADERS = {
     'sec-ch-ua-platform-version': '"14.0.0"',
 }
 
-def cpu_webvpn_login(credentials,skip_check=False):
+def login(credentials,skip_check=False):
     s = requests.Session()
     headers = HEADERS.copy()
 
