@@ -16,13 +16,14 @@ def get_dir(myfile=__file__):
         mydir=os.path.dirname(os.path.abspath(myfile))
     return mydir
 MYDIR = get_dir(__file__)
+INST_HOSTNAME = 'webvpn.cpu.edu.cn'
 
 def main():
-    url = urlc.get_url(urlc.get_url_info('https://cn.bing.com'))
+    url = urlc.get_url(urlc.get_url_info('ws://121.40.165.18:8800',INST_HOSTNAME))
     print(url)
-    cred = wvpn.get_credentials()
-    mycookie = wvpn.cpu_webvpn_login(cred)
-    print(mycookie)
+    # cred = wvpn.get_credentials()
+    # mycookie = wvpn.cpu_webvpn_login(cred)
+    # print(mycookie)
 
 if __name__ == '__main__':
     main()
