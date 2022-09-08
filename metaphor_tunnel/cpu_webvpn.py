@@ -68,9 +68,9 @@ def get_credentials(file_path='credentials.txt',force_password_input=False):
         cred.append(input('请输入学号: '))
     else:
         print('学号已由凭证文件提供: %s' %(cred[0]))
-    if isexist:
-        print('凭证文件未提供密码或设置了强制密码输入')
     if len(cred) <= 1 or force_password_input:
+        if isexist:
+            print('未从凭证文件处获得密码或设置了强制密码输入')
         import getpass
         cred.append(getpass.getpass('请输入密码: '))
     else:
