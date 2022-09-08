@@ -11,7 +11,7 @@ URL_INFO = {
         'port':'',
     },
     'target': {
-        'protocol': 'https',
+        'protocol': '',
         'hostname': '',
         'port': '',
         'uri': '/',

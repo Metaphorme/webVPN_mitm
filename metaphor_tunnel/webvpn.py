@@ -53,14 +53,6 @@ def cpu_webvpn_login(credentials,skip_check=False):
     else:
         raise RuntimeError('登录失败，请检查学号密码或选择跳过验证')
 
-def web_go(url,cookie):
-    cookies = {
-        'wengine_vpn_ticketwebvpn_cpu_edu_cn': cookie,
-    }
-    headers = HEADERS.copy()
-    response = requests.get(url, cookies=cookies, headers=headers)
-    return response
-
 def get_credentials(file_path='credentials.txt',force_password_input=False):
     cred = []
     import os
