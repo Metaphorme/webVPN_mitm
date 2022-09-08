@@ -29,9 +29,9 @@ def encrypt(text_pln, key = KEY_, cfb_iv = IV_, size = 128):
     return res
 
 def get_url(url_info):
-    hostname_pln = url_info['target']['hostname_pln']
-    if hostname_pln != '':
-        hostname_encrypted = encrypt(hostname_pln)
+    hostname_pln_target = url_info['target']['hostname_pln']
+    if hostname_pln_target != '':
+        hostname_encrypted_target = encrypt(hostname_pln_target)
     else:
         return ''
 
@@ -49,7 +49,7 @@ def get_url(url_info):
         port_webvpn,
         url_info['target']['protocol'],
         port_target,
-        hostname_encrypted,
+        hostname_encrypted_target,
         url_info['target']['uri'],
     )
     return url
@@ -79,8 +79,8 @@ def get_url_info(url):
 
 if __name__ == '__main__':
     # Test only
-    my_url_info = get_url_info('https://cn.bing.com:443/?mkt=zh-CN')
-    print(my_url_info)
+    my_url_info = get_url_info('https://www.cpu.edu.cn/')
+    # print(my_url_info)
     # my_url_info = {
     #     'webvpn': {
     #         'protocol': 'https',
@@ -94,5 +94,5 @@ if __name__ == '__main__':
     #         'uri': '/?mkt=zh-CN',
     #     }
     # }
-    # print(get_url(my_url_info))
+    print(get_url(my_url_info))
     
