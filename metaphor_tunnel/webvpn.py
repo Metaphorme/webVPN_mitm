@@ -48,7 +48,6 @@ def cpu_webvpn_login(credentials,skip_check=False):
     }
     
     response = s.post('https://webvpn.cpu.edu.cn/https/77726476706e69737468656265737421f9f30f9f372526557a1dc7af96/sso/login', params=params,headers=headers, data=data)
-    
     if response.url == 'https://webvpn.cpu.edu.cn/portal' or skip_check:
         return mycookie
     else:

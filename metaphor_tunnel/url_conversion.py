@@ -18,19 +18,19 @@ URL_INFO = {
     }
 }
 
-def encrypt(text_pln, key = KEY_, cfb_iv = IV_, size = 128):
+def encrypt(text, key = KEY_, cfb_iv = IV_, size = 128):
     cfb_cipher_encrypt = AES.new(key, AES.MODE_CFB, cfb_iv, segment_size = size)
 
-    message = text_pln.encode('utf-8')
+    message = text.encode('utf-8')
     mid = cfb_cipher_encrypt.encrypt(message)
     res = hexlify(cfb_iv).decode('utf-8') + hexlify(mid).decode()
 
     return res
 
 def get_url(url_info):
-    hostname_pln_target = url_info['target']['hostname']
-    if hostname_pln_target != '':
-        hostname_encrypted_target = encrypt(hostname_pln_target)
+    hostname_target = url_info['target']['hostname']
+    if hostname_target != '':
+        hostname_encrypted_target = encrypt(hostname_target)
     else:
         return ''
 

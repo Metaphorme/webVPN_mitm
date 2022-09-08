@@ -15,6 +15,7 @@ def get_dir(myfile=__file__):
     else:
         mydir=os.path.dirname(os.path.abspath(myfile))
     return mydir
+
 MYDIR = get_dir(__file__)
 INST_HOSTNAME = 'webvpn.cpu.edu.cn'
 
