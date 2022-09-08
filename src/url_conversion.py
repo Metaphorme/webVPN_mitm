@@ -54,21 +54,45 @@ def get_url(url_info):
     )
     return url
 
+def get_url_info(url):
+    url_info = URL_INFO.copy()
+
+    st1 = url.split('://')
+    url_info['target']['protocol'] = st1[0]
+
+    index = st1[1].find('/')
+    if index == -1:
+        st2 = st1[1][0:]
+        url_info['target']['uri'] = ''
+    else:
+        st2 = st1[1][0:index]
+        url_info['target']['uri'] = st1[1][index:]
+
+    if st2.find(':') != -1:
+        st3 = st2.split(':')
+        url_info['target']['hostname_pln'] = st3[0]
+        url_info['target']['port'] = st3[1]
+    else:
+        url_info['target']['hostname_pln'] = st2
+
+    return url_info
+
 if __name__ == '__main__':
     # Test only
-    # my_url_info = URL_INFO.copy()
-    my_url_info = {
-        'webvpn': {
-            'protocol': 'https',
-            'hostname': INST_HOSTNAME,
-            'port':'',
-        },
-        'target': {
-            'protocol': 'https',
-            'hostname_pln': 'cn.bing.com',
-            'port': '443',
-            'uri': '/?mkt=zh-CN',
-        }
-    }
-    print(get_url(my_url_info))
+    my_url_info = get_url_info('https://cn.bing.com:443/?mkt=zh-CN')
+    print(my_url_info)
+    # my_url_info = {
+    #     'webvpn': {
+    #         'protocol': 'https',
+    #         'hostname': INST_HOSTNAME,
+    #         'port':'',
+    #     },
+    #     'target': {
+    #         'protocol': 'https',
+    #         'hostname_pln': 'cn.bing.com',
+    #         'port': '443',
+    #         'uri': '/?mkt=zh-CN',
+    #     }
+    # }
+    # print(get_url(my_url_info))
     
