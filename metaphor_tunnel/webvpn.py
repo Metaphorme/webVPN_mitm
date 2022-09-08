@@ -88,11 +88,4 @@ def get_credentials(file_path='credentials.txt',force_password_input=False):
     return cred
 
 if __name__ == '__main__':
-    # Test only
-    url = 'https://webvpn.cpu.edu.cn/https/77726476706e69737468656265737421f3f90f9e2e3e6f1e7d0784/' # bing
-    # url = 'https://webvpn.cpu.edu.cn/https/77726476706e69737468656265737421e7e056d224207d1e7b0c9ce29b5b/' # cpu
-    cred = get_credentials(force_password_input=False)
-    mycookie = cpu_webvpn_login(cred,skip_check=False)
-    # resp = web_go(url,mycookie)
-    # print(resp.text)
-    print(mycookie)
+    pass
