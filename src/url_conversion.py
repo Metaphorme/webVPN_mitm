@@ -79,7 +79,9 @@ def get_url_info(url):
 
 if __name__ == '__main__':
     # Test only
-    my_url_info = get_url_info('https://www.cpu.edu.cn/')
+    # my_url_info = get_url_info('https://www.cpu.edu.cn/')
+    # my_url_info = get_url_info('https://45.63.123.214:21312')
+    my_url_info = get_url_info('ws://121.40.165.18:8800')
     # print(my_url_info)
     # my_url_info = {
     #     'webvpn': {
