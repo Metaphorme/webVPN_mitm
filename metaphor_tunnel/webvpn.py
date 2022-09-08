@@ -1,4 +1,3 @@
-import os
 import getpass
 import requests
 
@@ -66,6 +65,7 @@ def web_go(url,cookie):
 
 def get_credentials(file_path='credentials.txt',force_password_input=False):
     cred = []
+    import os
     if os.path.exists(file_path):
         with open(file_path,'r',encoding='utf-8') as f:
             cred = f.read().strip().split('\n')
