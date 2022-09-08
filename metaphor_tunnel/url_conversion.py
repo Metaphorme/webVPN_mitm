@@ -3,17 +3,16 @@ from binascii import hexlify
 
 KEY_ = b'wrdvpnisthebest!'
 IV_  = b'wrdvpnisthebest!'
-INST_HOSTNAME = 'webvpn.cpu.edu.cn'
 
 URL_INFO = {
     'webvpn': {
         'protocol': 'https',
-        'hostname': INST_HOSTNAME,
+        'hostname': '',
         'port':'',
     },
     'target': {
         'protocol': 'https',
-        'hostname_pln': '',
+        'hostname': '',
         'port': '',
         'uri': '/',
     }
@@ -29,7 +28,7 @@ def encrypt(text_pln, key = KEY_, cfb_iv = IV_, size = 128):
     return res
 
 def get_url(url_info):
-    hostname_pln_target = url_info['target']['hostname_pln']
+    hostname_pln_target = url_info['target']['hostname']
     if hostname_pln_target != '':
         hostname_encrypted_target = encrypt(hostname_pln_target)
     else:
@@ -54,11 +53,15 @@ def get_url(url_info):
     )
     return url
 
-def get_url_info(url):
+def get_url_info(url,inst_hostname):
     url_info = URL_INFO.copy()
+
+    url_info['webvpn']['hostname'] = inst_hostname
 
     st1 = url.split('://')
     url_info['target']['protocol'] = st1[0]
+    if st1[0] == 'ws' or st1[0] == 'wss':
+        url_info['webvpn']['protocol'] = 'wss'
 
     index = st1[1].find('/')
     if index == -1:
@@ -70,31 +73,13 @@ def get_url_info(url):
 
     if st2.find(':') != -1:
         st3 = st2.split(':')
-        url_info['target']['hostname_pln'] = st3[0]
+        url_info['target']['hostname'] = st3[0]
         url_info['target']['port'] = st3[1]
     else:
-        url_info['target']['hostname_pln'] = st2
+        url_info['target']['hostname'] = st2
 
     return url_info
 
 if __name__ == '__main__':
-    # Test only
-    # my_url_info = get_url_info('https://www.cpu.edu.cn/')
-    # my_url_info = get_url_info('https://45.63.123.214:21312')
-    my_url_info = get_url_info('ws://121.40.165.18:8800')
-    # print(my_url_info)
-    # my_url_info = {
-    #     'webvpn': {
-    #         'protocol': 'https',
-    #         'hostname': INST_HOSTNAME,
-    #         'port':'',
-    #     },
-    #     'target': {
-    #         'protocol': 'https',
-    #         'hostname_pln': 'cn.bing.com',
-    #         'port': '443',
-    #         'uri': '/?mkt=zh-CN',
-    #     }
-    # }
-    print(get_url(my_url_info))
+    pass
     
