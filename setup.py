@@ -20,7 +20,7 @@ setuptools.setup(
     ],
     classifiers=[
         "Programming Language :: Python :: 3",
-        "License :: OSI Approved :: MIT License",
+        "License :: OSI Approved :: MPL-2.0 License",
         "Operating System :: OS Independent",
     ],
 )
