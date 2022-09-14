@@ -1,12 +1,8 @@
-import getpass
-
 import requests
 
 
 class GetCred:
-    def __init__(self, username, password):
-        self.username = username
-        self.password = password
+    def __init__(self):
         self.HEADERS = {
             'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
             'Accept-Language': 'en-US,en;q=0.9',
@@ -29,7 +25,7 @@ class GetCred:
             'sec-ch-ua-platform-version': '"14.0.0"',
         }
 
-    def login(self, credentials, skip_check=False):
+    def login(self, username, password, skip_check=False):
         s = requests.Session()
         headers = self.HEADERS.copy()
 
@@ -51,8 +47,8 @@ class GetCred:
             'service': 'https://webvpn.cpu.edu.cn/login?cas_login=true',
             '_eventId': 'submit',
             'geolocation': '',
-            'username': credentials[0],
-            'password': credentials[1],
+            'username': username,
+            'password': password,
             'rememberpwd': 'on',
         }
 
@@ -63,32 +59,20 @@ class GetCred:
         else:
             raise RuntimeError('登录失败，请检查学号密码或选择跳过验证')
 
-    def get_credentials(self, file_path='credentials.txt', force_password_input=False):
-        cred = []
+    def get_credentials(self, file_path='credentials.txt'):
         import os
         if os.path.exists(file_path):
             with open(file_path, 'r', encoding='utf-8') as f:
-                cred = f.read().strip().split('\n')
-            is_exist = True
+                username, password = f.read().strip().split('\n')
         else:
             print('找不到凭证文件，将采用学号/密码方式登录')
-            is_exist = False
 
-        if len(cred) == 0 or cred[0] == '':
-            cred.append(self.username)
-        else:
-            print('学号已由凭证文件提供: %s' % (cred[0]))
-        if len(cred) <= 1 or force_password_input:
-            if is_exist:
-                print('未从凭证文件处获得密码或设置了强制密码输入')
-            cred.append(self.password)
-        else:
-            print('密码已由凭证文件提供')
-
-        return self.login(cred)
+        return username, password
 
 
 if __name__ == '__main__':
-    g = GetCred(username=input('请输入学号: '),
-                password=getpass.getpass('请输入密码：'))
-    print(g.get_credentials())
+    import getpass
+
+    g = GetCred()
+    print(g.login(username=input('请输入学号: '),
+                  password=getpass.getpass('请输入密码：')))
