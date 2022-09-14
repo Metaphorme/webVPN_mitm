@@ -1,4 +1,5 @@
 from binascii import hexlify
+import copy
 
 from Crypto.Cipher import AES
 
@@ -61,7 +62,7 @@ class TransURL:
         return url
 
     def __get_url_info(self, url, inst_hostname):
-        url_info = self.URL_INFO.copy()
+        url_info = copy.deepcopy(self.URL_INFO)
 
         url_info['webvpn']['hostname'] = inst_hostname
 
@@ -69,7 +70,6 @@ class TransURL:
         url_info['target']['protocol'] = st1[0]
         if st1[0] == 'ws' or st1[0] == 'wss':
             url_info['webvpn']['protocol'] = 'wss'
-
         index = st1[1].find('/')
         if index == -1:
             st2 = st1[1][0:]
@@ -87,10 +87,10 @@ class TransURL:
 
         return url_info
 
-    def url_decode(self, url):
+    def url_encode(self, url):
         return self.__get_url(self.__get_url_info(url, self.inst_hostname))
 
 
 if __name__ == '__main__':
     d = TransURL("webvpn.cpu.edu.cn")
-    print(d.url_decode("ws://121.40.165.18:8800"))
+    print(d.url_encode("ws://1.1.1.1:8800"))
