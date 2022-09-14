@@ -1,4 +1,4 @@
-from binascii import hexlify
+from binascii import hexlify, unhexlify
 import copy
 
 from Crypto.Cipher import AES
@@ -9,6 +9,7 @@ class TransURL:
         self.inst_hostname = inst_hostname
         self.KEY_ = b'wrdvpnisthebest!'
         self.IV_ = b'wrdvpnisthebest!'
+        self.size = 128
 
         self.URL_INFO = {
             'webvpn': {
@@ -24,9 +25,10 @@ class TransURL:
             }
         }
 
-    def __encrypt(self, text, size=128):
+    def __encrypt(self, text):
         key = self.KEY_
         cfb_iv = self.IV_
+        size = self.size
         cfb_cipher_encrypt = AES.new(key, AES.MODE_CFB, cfb_iv, segment_size=size)
 
         message = text.encode('utf-8')
@@ -87,10 +89,40 @@ class TransURL:
 
         return url_info
 
+    def __get_plain_text(self, ciphertext):
+        key = self.KEY_
+        cfb_iv = self.IV_
+        size = self.size
+
+        message = unhexlify(ciphertext.encode('utf-8'))
+        cfb_cipher_decrypt = AES.new(key, AES.MODE_CFB, cfb_iv, segment_size=size)
+        cfb_msg_decrypt = cfb_cipher_decrypt.decrypt(message).decode('utf-8')
+
+        return cfb_msg_decrypt
+
     def url_encode(self, url):
         return self.__get_url(self.__get_url_info(url, self.inst_hostname))
+
+    def url_decode(self, url):
+        parts = url.split('/')
+        pro = parts[3]
+        key_cph = parts[4]
+
+        if key_cph[:16] == hexlify(self.IV_).decode('utf-8'):
+            print(key_cph[:32])
+            return None
+        else:
+            hostname = self.__get_plain_text(key_cph[32:])
+            fold = '/'.join(parts[5:])
+
+            if "-" in pro:
+                protocol, port = pro.split("-")
+                return protocol + "://" + hostname + ":" + port + "/" + fold
+            else:
+                return pro + "://" + hostname + "/" + fold
 
 
 if __name__ == '__main__':
     d = TransURL("webvpn.cpu.edu.cn")
     print(d.url_encode("ws://1.1.1.1:8800"))
+    print(d.url_decode(d.url_encode("ws://1.1.1.1:8800")))
