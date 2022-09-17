@@ -4,130 +4,160 @@ import copy
 from Crypto.Cipher import AES
 
 
-class TransURL:
-    def __init__(self, inst_hostname):
-        self.inst_hostname = inst_hostname
-        self.KEY_ = b'wrdvpnisthebest!'
-        self.IV_ = b'wrdvpnisthebest!'
-        self.size = 128
-
-        self.URL_INFO = {
-            'webvpn': {
-                'protocol': 'https',
-                'hostname': '',
-                'port': '',
-            },
-            'target': {
-                'protocol': '',
-                'hostname': '',
-                'port': '',
-                'url': '/',
-            }
+class WebVPN_URL:
+    KEY_ = b'wrdvpnisthebest!'
+    IV_ = b'wrdvpnisthebest!'
+    SIZE = 128
+    PREFIX = '77726476706e69737468656265737421'
+    PREFIX_LEN = len(PREFIX)
+    URL_INFO = {
+        'webvpn': {
+            'protocol': 'https',
+            'hostname': '',
+            'port': '',
+        },
+        'target': {
+            'protocol': '',
+            'hostname': '',
+            'port': '',
+            'url': '/',
         }
+    }
+    def __init__(self, inst_hostname):
+        self.INST_HOSTNAME = inst_hostname
+        self.url_info = copy.deepcopy(WebVPN_URL.URL_INFO)
 
     def __encrypt(self, text):
-        key = self.KEY_
-        cfb_iv = self.IV_
-        size = self.size
+        key = WebVPN_URL.KEY_
+        cfb_iv = WebVPN_URL.IV_
+        size = WebVPN_URL.SIZE
         cfb_cipher_encrypt = AES.new(key, AES.MODE_CFB, cfb_iv, segment_size=size)
 
         message = text.encode('utf-8')
         mid = cfb_cipher_encrypt.encrypt(message)
-        res = hexlify(cfb_iv).decode('utf-8') + hexlify(mid).decode()
+        return hexlify(mid).decode()
 
-        return res
-
-    def __get_url(self, url_info):
-        hostname_target = url_info['target']['hostname']
-        if hostname_target != '':
-            hostname_encrypted_target = self.__encrypt(hostname_target)
-        else:
-            return ''
-
-        port_webvpn = str(url_info['webvpn']['port'])
-        if port_webvpn != '':
-            port_webvpn = ':' + port_webvpn
-
-        port_target = str(url_info['target']['port'])
-        if port_target != '':
-            port_target = '-' + port_target
-
-        url = '%s://%s%s/%s%s/%s%s' % (
-            url_info['webvpn']['protocol'],
-            url_info['webvpn']['hostname'],
-            port_webvpn,
-            url_info['target']['protocol'],
-            port_target,
-            hostname_encrypted_target,
-            url_info['target']['url'],
-        )
-        return url
-
-    def __get_url_info(self, url, inst_hostname):
-        url_info = copy.deepcopy(self.URL_INFO)
-
-        url_info['webvpn']['hostname'] = inst_hostname
-
-        st1 = url.split('://')
-        url_info['target']['protocol'] = st1[0]
-        if st1[0] == 'ws' or st1[0] == 'wss':
-            url_info['webvpn']['protocol'] = 'wss'
-        index = st1[1].find('/')
-        if index == -1:
-            st2 = st1[1][0:]
-            url_info['target']['url'] = ''
-        else:
-            st2 = st1[1][0:index]
-            url_info['target']['url'] = st1[1][index:]
-
-        if st2.find(':') != -1:
-            st3 = st2.split(':')
-            url_info['target']['hostname'] = st3[0]
-            url_info['target']['port'] = st3[1]
-        else:
-            url_info['target']['hostname'] = st2
-
-        return url_info
-
-    def __get_plain_text(self, ciphertext):
-        key = self.KEY_
-        cfb_iv = self.IV_
-        size = self.size
+    def __decrypt(self, ciphertext):
+        key = WebVPN_URL.KEY_
+        cfb_iv = WebVPN_URL.IV_
+        size = WebVPN_URL.SIZE
 
         message = unhexlify(ciphertext.encode('utf-8'))
         cfb_cipher_decrypt = AES.new(key, AES.MODE_CFB, cfb_iv, segment_size=size)
-        cfb_msg_decrypt = cfb_cipher_decrypt.decrypt(message).decode('utf-8')
+        return cfb_cipher_decrypt.decrypt(message).decode('utf-8')
 
-        return cfb_msg_decrypt
+    def __get_url(self,mode):
+        hostname_target = self.url_info['target']['hostname']
+        if hostname_target != '' and mode == 'encode':
+            hostname_encrypted_target = WebVPN_URL.PREFIX + self.__encrypt(hostname_target)
+        elif hostname_target == '':
+            return ''
 
-    def url_encode(self, url):
-        return self.__get_url(self.__get_url_info(url, self.inst_hostname))
+        port_webvpn = str(self.url_info['webvpn']['port'])
+        if port_webvpn != '' and mode == 'encode':
+            port_webvpn = ':' + port_webvpn
+
+        port_target = str(self.url_info['target']['port'])
+        if port_target != '':
+            if mode == 'encode':
+                port_target = '-' + port_target
+            elif mode == 'decode':
+                port_target = ':' + port_target
+        if mode == 'encode':
+            url = '%s://%s%s/%s%s/%s%s' % (
+                self.url_info['webvpn']['protocol'],
+                self.url_info['webvpn']['hostname'],
+                port_webvpn,
+                self.url_info['target']['protocol'],
+                port_target,
+                hostname_encrypted_target,
+                self.url_info['target']['url'],
+            )
+        elif mode == 'decode':
+            url = '%s://%s%s%s' % (
+                self.url_info['target']['protocol'],
+                hostname_target,
+                port_target,
+                self.url_info['target']['url'],
+            )
+        return url
+
+    def __get_url_info_from_plain(self, url):
+        self.url_info = copy.deepcopy(WebVPN_URL.URL_INFO)
+
+        self.url_info['webvpn']['hostname'] = self.INST_HOSTNAME
+
+        st1 = url.split('//')
+        self.url_info['target']['protocol'] = st1[0][:-1]
+        if st1[0] == 'ws:' or st1[0] == 'wss:':
+            self.url_info['webvpn']['protocol'] = 'wss'
+        index = st1[1].find('/')
+        if index == -1:
+            st2 = st1[1][0:]
+            self.url_info['target']['url'] = '/'
+        else:
+            st2 = st1[1][0:index]
+            self.url_info['target']['url'] = st1[1][index:]
+
+        if st2.find(':') != -1:
+            st2_1 = st2.split(':')
+            self.url_info['target']['hostname'] = st2_1[0]
+            self.url_info['target']['port'] = st2_1[1]
+        else:
+            self.url_info['target']['hostname'] = st2
+
+    def __get_url_info_from_encrypted(self, url):
+        self.url_info = copy.deepcopy(WebVPN_URL.URL_INFO)
+
+        self.url_info['webvpn']['hostname'] = self.INST_HOSTNAME
+
+        st1 = url.split('//')
+        if st1[0] == '':
+            st1[0] = 'https:'
+        self.url_info['webvpn']['protocol'] = st1[0][:-1]
+        
+        index1 = st1[1].find('/')
+        st2 = st1[1][0:index1]
+
+        if st2.find(':') != -1:
+            st2_1 = st2.split(':')
+            self.url_info['webvpn']['port'] = st2_1[1]
+        
+        st3 = st1[1][index1+1:]
+        index2 = st3.find('/')
+        st4 = st3[0:index2]
+
+        if st4.find('-') != -1:
+            st4_1 = st4.split('-')
+            self.url_info['target']['protocol'] = st4_1[0]
+            self.url_info['target']['port'] = st4_1[1]
+        else:
+            self.url_info['target']['protocol'] = st4
+
+        st5 = st3[index2+1:]
+        index3 = st5.find('/')
+        if index3 != -1:
+            hostname_encrypted_target = st5[:index3]
+            self.url_info['target']['url'] = st5[index3:]
+        else:
+            hostname_encrypted_target = st5
+            self.url_info['target']['url'] = '/'
+
+        hostname_target = self.__decrypt(hostname_encrypted_target[WebVPN_URL.PREFIX_LEN:])
+        self.url_info['target']['hostname'] = hostname_target
+
+    def url_encode(self, url=''):
+        if url != '':
+            self.__get_url_info_from_plain(url)
+        return self.__get_url(mode = 'encode')
 
     def url_decode(self, url):
-        # 解析相对路径的 url
-        if url[:2] == "//":
-            url = "https:" + url.split("?")[0]
-
-        parts = url.split('/')
-        pro = parts[3]
-        key_cph = parts[4]
-
-        if key_cph[:16] == hexlify(self.IV_).decode('utf-8'):
-            print(key_cph[:32])
-            return None
-        else:
-            hostname = self.__get_plain_text(key_cph[32:])
-            fold = '/'.join(parts[5:])
-
-            if "-" in pro:
-                protocol, port = pro.split("-")
-                return protocol + "://" + hostname + ":" + port + "/" + fold
-            else:
-                return pro + "://" + hostname + "/" + fold
-
+        if url != '':
+            self.__get_url_info_from_encrypted(url)
+        return self.__get_url(mode = 'decode')
 
 if __name__ == '__main__':
-    d = TransURL("webvpn.cpu.edu.cn")
+    d = WebVPN_URL("webvpn.cpu.edu.cn")
     print(d.url_encode("ws://1.1.1.1:8800"))
     print(d.url_decode(d.url_encode("ws://1.1.1.1:8800")))
     print(d.url_decode(
