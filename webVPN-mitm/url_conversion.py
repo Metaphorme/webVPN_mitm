@@ -1,8 +1,6 @@
 from binascii import hexlify, unhexlify
-import copy
-
 from Crypto.Cipher import AES
-
+import copy
 
 class WebVPN_URL:
     KEY_ = b'wrdvpnisthebest!'
@@ -151,7 +149,7 @@ class WebVPN_URL:
             self.__get_url_info_from_plain(url)
         return self.__get_url(mode = 'encode')
 
-    def url_decode(self, url):
+    def url_decode(self, url=''):
         if url != '':
             self.__get_url_info_from_encrypted(url)
         return self.__get_url(mode = 'decode')
