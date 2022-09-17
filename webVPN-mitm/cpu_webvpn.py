@@ -66,20 +66,22 @@ class WebvpnCred:
         username, password = ['','']
         try:
             with open(file_path, 'r', encoding='utf-8') as f:
-                username, password = f.read().strip().split('\n')
+                data = f.read().strip().split('\n')
+                username = data[0]
+                password = data[1]
         except:
             pass
         if username == '' or password == '':
             if username == '':
                 username = input('请输入学号: ')
+            else:
+                print('学号输入为: ' + username)
             if password == '':
                 import getpass
-                password = getpass.getpass('请输入密码：')
+                password = getpass.getpass('请输入密码: ')
         self.credentials = [username, password]
 
 if __name__ == '__main__':
-    import getpass
-
     g = WebvpnCred()
     g.get_credentials()
     g.login()
