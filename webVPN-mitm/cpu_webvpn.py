@@ -1,10 +1,8 @@
 import requests
 
-class WebvpnCred:
+
+class GetCred:
     def __init__(self):
-        self.cookie_value = ''
-        self.cookie = {'wengine_vpn_ticketwebvpn_cpu_edu_cn':''}
-        self.credentials = ['','']
         self.HEADERS = {
             'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
             'Accept-Language': 'en-US,en;q=0.9',
@@ -27,7 +25,7 @@ class WebvpnCred:
             'sec-ch-ua-platform-version': '"14.0.0"',
         }
 
-    def login(self, skip_check=False):
+    def login(self, username, password, skip_check=False):
         s = requests.Session()
         headers = self.HEADERS.copy()
 
@@ -49,40 +47,32 @@ class WebvpnCred:
             'service': 'https://webvpn.cpu.edu.cn/login?cas_login=true',
             '_eventId': 'submit',
             'geolocation': '',
-            'username': self.credentials[0],
-            'password': self.credentials[1],
+            'username': username,
+            'password': password,
             'rememberpwd': 'on',
         }
 
         response = s.post('https://webvpn.cpu.edu.cn/https/77726476706e69737468656265737421f9f30f9f372526557a1dc7af96'
                           '/sso/login', params=params, headers=headers, data=data)
         if response.url == 'https://webvpn.cpu.edu.cn/portal' or skip_check:
-            self.cookie_value = my_cookie
-            self.cookie['wengine_vpn_ticketwebvpn_cpu_edu_cn'] = my_cookie
+            return my_cookie
         else:
             raise RuntimeError('登录失败，请检查学号密码或选择跳过验证')
 
     def get_credentials(self, file_path='credentials.txt'):
-        username, password = ['','']
-        try:
+        import os
+        if os.path.exists(file_path):
             with open(file_path, 'r', encoding='utf-8') as f:
-                data = f.read().strip().split('\n')
-                username = data[0]
-                password = data[1]
-        except:
-            pass
-        if username == '' or password == '':
-            if username == '':
-                username = input('请输入学号: ')
-            else:
-                print('学号输入为: ' + username)
-            if password == '':
-                import getpass
-                password = getpass.getpass('请输入密码: ')
-        self.credentials = [username, password]
+                username, password = f.read().strip().split('\n')
+        else:
+            print('找不到凭证文件，将采用学号/密码方式登录')
+
+        return username, password
+
 
 if __name__ == '__main__':
-    g = WebvpnCred()
-    g.get_credentials()
-    g.login()
-    print(g.cookie_value)
+    import getpass
+
+    g = GetCred()
+    print(g.login(username=input('请输入学号: '),
+                  password=getpass.getpass('请输入密码：')))
