@@ -69,6 +69,14 @@ class GetCred:
 
         return username, password
 
+    def logout(self, cookie):
+        requests.get(
+            url='https://webvpn.cpu.edu.cn/http/77726476706e69737468656265737421fdee0f9f372526557a1dc7af96/EIP/login/logout.htm',
+            headers=self.HEADERS,
+            cookies={'wengine_vpn_ticketwebvpn_cpu_edu_cn': cookie}
+        )
+        return None
+
 
 if __name__ == '__main__':
     import getpass
