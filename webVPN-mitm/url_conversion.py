@@ -106,7 +106,7 @@ class TransURL:
     def url_decode(self, url):
         # 解析相对路径的 url
         if url[:2] == "//":
-            url = "https:" + url
+            url = "https:" + url.split("?")[0]
 
         parts = url.split('/')
         pro = parts[3]
