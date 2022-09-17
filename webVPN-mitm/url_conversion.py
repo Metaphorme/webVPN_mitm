@@ -104,6 +104,10 @@ class TransURL:
         return self.__get_url(self.__get_url_info(url, self.inst_hostname))
 
     def url_decode(self, url):
+        # 解析相对路径的 url
+        if url[:2] == "//":
+            url = "https:" + url
+
         parts = url.split('/')
         pro = parts[3]
         key_cph = parts[4]
@@ -126,3 +130,5 @@ if __name__ == '__main__':
     d = TransURL("webvpn.cpu.edu.cn")
     print(d.url_encode("ws://1.1.1.1:8800"))
     print(d.url_decode(d.url_encode("ws://1.1.1.1:8800")))
+    print(d.url_decode(
+        "//webvpn.cpu.edu.cn/https/77726476706e69737468656265737421e7e056d2253161546b468aa395/img/PCtm_d9c8750bed0b3c7d089fa7d55720d6cf.png"))
