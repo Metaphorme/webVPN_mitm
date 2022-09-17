@@ -2,7 +2,7 @@ from binascii import hexlify, unhexlify
 from Crypto.Cipher import AES
 import copy
 
-class WebVPN_URL:
+class WebvpnUrl:
     KEY_ = b'wrdvpnisthebest!'
     IV_ = b'wrdvpnisthebest!'
     SIZE = 128
@@ -23,12 +23,12 @@ class WebVPN_URL:
     }
     def __init__(self, inst_hostname):
         self.INST_HOSTNAME = inst_hostname
-        self.url_info = copy.deepcopy(WebVPN_URL.URL_INFO)
+        self.url_info = copy.deepcopy(WebvpnUrl.URL_INFO)
 
     def __encrypt(self, text):
-        key = WebVPN_URL.KEY_
-        cfb_iv = WebVPN_URL.IV_
-        size = WebVPN_URL.SIZE
+        key = WebvpnUrl.KEY_
+        cfb_iv = WebvpnUrl.IV_
+        size = WebvpnUrl.SIZE
         cfb_cipher_encrypt = AES.new(key, AES.MODE_CFB, cfb_iv, segment_size=size)
 
         message = text.encode('utf-8')
@@ -36,9 +36,9 @@ class WebVPN_URL:
         return hexlify(mid).decode()
 
     def __decrypt(self, ciphertext):
-        key = WebVPN_URL.KEY_
-        cfb_iv = WebVPN_URL.IV_
-        size = WebVPN_URL.SIZE
+        key = WebvpnUrl.KEY_
+        cfb_iv = WebvpnUrl.IV_
+        size = WebvpnUrl.SIZE
 
         message = unhexlify(ciphertext.encode('utf-8'))
         cfb_cipher_decrypt = AES.new(key, AES.MODE_CFB, cfb_iv, segment_size=size)
@@ -47,7 +47,7 @@ class WebVPN_URL:
     def __get_url(self,mode):
         hostname_target = self.url_info['target']['hostname']
         if hostname_target != '' and mode == 'encode':
-            hostname_encrypted_target = WebVPN_URL.PREFIX + self.__encrypt(hostname_target)
+            hostname_encrypted_target = WebvpnUrl.PREFIX + self.__encrypt(hostname_target)
         elif hostname_target == '':
             return ''
 
@@ -81,7 +81,7 @@ class WebVPN_URL:
         return url
 
     def __get_url_info_from_plain(self, url):
-        self.url_info = copy.deepcopy(WebVPN_URL.URL_INFO)
+        self.url_info = copy.deepcopy(WebvpnUrl.URL_INFO)
 
         self.url_info['webvpn']['hostname'] = self.INST_HOSTNAME
 
@@ -105,7 +105,7 @@ class WebVPN_URL:
             self.url_info['target']['hostname'] = st2
 
     def __get_url_info_from_encrypted(self, url):
-        self.url_info = copy.deepcopy(WebVPN_URL.URL_INFO)
+        self.url_info = copy.deepcopy(WebvpnUrl.URL_INFO)
 
         self.url_info['webvpn']['hostname'] = self.INST_HOSTNAME
 
@@ -141,7 +141,7 @@ class WebVPN_URL:
             hostname_encrypted_target = st5
             self.url_info['target']['url'] = '/'
 
-        hostname_target = self.__decrypt(hostname_encrypted_target[WebVPN_URL.PREFIX_LEN:])
+        hostname_target = self.__decrypt(hostname_encrypted_target[WebvpnUrl.PREFIX_LEN:])
         self.url_info['target']['hostname'] = hostname_target
 
     def url_encode(self, url=''):
@@ -155,7 +155,7 @@ class WebVPN_URL:
         return self.__get_url(mode = 'decode')
 
 if __name__ == '__main__':
-    d = WebVPN_URL("webvpn.cpu.edu.cn")
+    d = WebvpnUrl("webvpn.cpu.edu.cn")
     print(d.url_encode("ws://1.1.1.1:8800"))
     print(d.url_decode(d.url_encode("ws://1.1.1.1:8800")))
     print(d.url_decode(
