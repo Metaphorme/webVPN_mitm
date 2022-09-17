@@ -17,14 +17,12 @@ class Modify:
         return None
 
     def __getCookie(self) -> None:
-        c = instCookie.GetCred()
-        self.cookie = c.login(username=self.username, password=self.password)
+        self.cookie = instCookie.login(username=self.username, password=self.password)
         ctx.log("Get cookie: {wengine_vpn_ticketwebvpn_cpu_edu_cn: " + self.cookie + "}")
         return None
 
     def done(self) -> None:
-        c = instCookie.GetCred()
-        c.logout(cookie=self.cookie)
+        instCookie.logout(cookie=self.cookie)
         return None
 
     def reformat(self, match: regex.match) -> str:
