@@ -1,6 +1,7 @@
+import copy
 from binascii import hexlify, unhexlify
 from Crypto.Cipher import AES
-import copy
+
 
 class WebvpnUrl:
     KEY_ = b'wrdvpnisthebest!'
@@ -21,6 +22,7 @@ class WebvpnUrl:
             'url': '/',
         }
     }
+
     def __init__(self, inst_hostname):
         self.INST_HOSTNAME = inst_hostname
         self.url_info = copy.deepcopy(WebvpnUrl.URL_INFO)
@@ -44,7 +46,7 @@ class WebvpnUrl:
         cfb_cipher_decrypt = AES.new(key, AES.MODE_CFB, cfb_iv, segment_size=size)
         return cfb_cipher_decrypt.decrypt(message).decode('utf-8')
 
-    def __get_url(self,mode):
+    def __get_url(self, mode):
         hostname_target = self.url_info['target']['hostname']
         if hostname_target != '' and mode == 'encode':
             hostname_encrypted_target = WebvpnUrl.PREFIX + self.__encrypt(hostname_target)
@@ -113,15 +115,15 @@ class WebvpnUrl:
         if st1[0] == '':
             st1[0] = 'https:'
         self.url_info['webvpn']['protocol'] = st1[0][:-1]
-        
+
         index1 = st1[1].find('/')
         st2 = st1[1][0:index1]
 
         if st2.find(':') != -1:
             st2_1 = st2.split(':')
             self.url_info['webvpn']['port'] = st2_1[1]
-        
-        st3 = st1[1][index1+1:]
+
+        st3 = st1[1][index1 + 1:]
         index2 = st3.find('/')
         st4 = st3[0:index2]
 
@@ -132,7 +134,7 @@ class WebvpnUrl:
         else:
             self.url_info['target']['protocol'] = st4
 
-        st5 = st3[index2+1:]
+        st5 = st3[index2 + 1:]
         index3 = st5.find('/')
         if index3 != -1:
             hostname_encrypted_target = st5[:index3]
@@ -147,16 +149,18 @@ class WebvpnUrl:
     def url_encode(self, url=''):
         if url != '':
             self.__get_url_info_from_plain(url)
-        return self.__get_url(mode = 'encode')
+        return self.__get_url(mode='encode')
 
     def url_decode(self, url=''):
         if url != '':
             self.__get_url_info_from_encrypted(url)
-        return self.__get_url(mode = 'decode')
+        return self.__get_url(mode='decode')
+
 
 if __name__ == '__main__':
     d = WebvpnUrl("webvpn.cpu.edu.cn")
     print(d.url_encode("ws://1.1.1.1:8800"))
     print(d.url_decode(d.url_encode("ws://1.1.1.1:8800")))
+    print(d.url_decode("https://webvpn.cpu.edu.cn/https/77726476706e69737468656265737421e7e056d224207d1e7b0c9ce29b5b/"))
     print(d.url_decode(
         "//webvpn.cpu.edu.cn/https/77726476706e69737468656265737421e7e056d2253161546b468aa395/img/PCtm_d9c8750bed0b3c7d089fa7d55720d6cf.png"))
