@@ -1,3 +1,4 @@
-pycryptodome
-requests
-websockets
+requests~=2.28.1
+mitmproxy~=8.1.1
+crypto~=1.4.1
+regex
