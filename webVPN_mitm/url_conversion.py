@@ -23,7 +23,7 @@ class WebvpnUrl:
         }
     }
 
-    def __init__(self, inst_hostname):
+    def __init__(self, inst_hostname=''):
         self.INST_HOSTNAME = inst_hostname
         self.url_info = copy.deepcopy(WebvpnUrl.URL_INFO)
 
