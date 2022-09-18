@@ -65,7 +65,6 @@ def read_credentials(file_path='credentials.txt') -> tuple or Exception:
         with open(file_path, 'rb') as f:
             username, password = str(base64.b64decode(f.read()), encoding="utf-8").split(':')
             print(username)
-            print(type(username))
     else:
         raise Exception("找不到凭证文件")
     return username, password

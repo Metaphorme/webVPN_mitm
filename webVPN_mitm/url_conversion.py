@@ -23,7 +23,7 @@ class WebvpnUrl:
         }
     }
 
-    def __init__(self, inst_hostname):
+    def __init__(self, inst_hostname=''):
         self.INST_HOSTNAME = inst_hostname
         self.url_info = copy.deepcopy(WebvpnUrl.URL_INFO)
 
@@ -164,3 +164,5 @@ if __name__ == '__main__':
     print(d.url_decode("https://webvpn.cpu.edu.cn/https/77726476706e69737468656265737421e7e056d224207d1e7b0c9ce29b5b/"))
     print(d.url_decode(
         "//webvpn.cpu.edu.cn/https/77726476706e69737468656265737421e7e056d2253161546b468aa395/img/PCtm_d9c8750bed0b3c7d089fa7d55720d6cf.png"))
+
+    print(d.url_encode("https://cr8.197946.com/kmp64_4.2.2.69_cr173.com.exe"))
