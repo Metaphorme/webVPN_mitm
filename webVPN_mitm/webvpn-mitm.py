@@ -3,6 +3,7 @@ from mitmproxy.script import concurrent
 import url_conversion
 import cpu_webvpn as instCookie
 import regex
+from cpu_webvpn import read_credentials
 
 
 class Modify:
@@ -57,5 +58,5 @@ class Modify:
 
 addons = [
     # 请在此处输入学号/密码
-    Modify(username="2020502032", password="CVu03CHU+sJz4w==")
+    Modify(username=read_credentials()[0], password=read_credentials()[1])
 ]
