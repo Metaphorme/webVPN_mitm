@@ -93,7 +93,7 @@ class WebvpnUrl:
         if st1[0] == 'ws:' or st1[0] == 'wss:':
             self.url_info['webvpn']['protocol'] = 'wss'
 
-        host = re.search('[0-9,a-z,A-Z,\.\-\:]*',st1[1]).group(0)
+        host = re.match('[0-9,a-z,A-Z,\.\-\:]*',st1[1]).group(0)
         my_url = st1[1][len(host):]
         if my_url == '' or my_url[0] != '/':
             my_url = '/' + my_url
