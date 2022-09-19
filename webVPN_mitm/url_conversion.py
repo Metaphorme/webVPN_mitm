@@ -13,19 +13,19 @@ class WebvpnUrl:
     URL_INFO = {
         'webvpn': {
             'protocol': 'https',
-            'hostname': '',
+            'host': '',
             'port': '',
         },
         'target': {
             'protocol': '',
-            'hostname': '',
+            'host': '',
             'port': '',
             'url': '/',
         }
     }
 
-    def __init__(self, inst_hostname=''):
-        self.INST_HOSTNAME = inst_hostname
+    def __init__(self, inst_host=''):
+        self.INST_HOST = inst_host
         self.url_info = copy.deepcopy(WebvpnUrl.URL_INFO)
 
     def __encrypt(self, text):
@@ -48,10 +48,10 @@ class WebvpnUrl:
         return cfb_cipher_decrypt.decrypt(message).decode('utf-8')
 
     def __get_url(self, mode):
-        hostname_target = self.url_info['target']['hostname']
-        if hostname_target != '' and mode == 'encode':
-            hostname_encrypted_target = WebvpnUrl.PREFIX + self.__encrypt(hostname_target)
-        elif hostname_target == '':
+        host_target = self.url_info['target']['host']
+        if host_target != '' and mode == 'encode':
+            host_encrypted_target = WebvpnUrl.PREFIX + self.__encrypt(host_target)
+        elif host_target == '':
             return ''
 
         port_webvpn = str(self.url_info['webvpn']['port'])
@@ -67,17 +67,17 @@ class WebvpnUrl:
         if mode == 'encode':
             url = '%s://%s%s/%s%s/%s%s' % (
                 self.url_info['webvpn']['protocol'],
-                self.url_info['webvpn']['hostname'],
+                self.url_info['webvpn']['host'],
                 port_webvpn,
                 self.url_info['target']['protocol'],
                 port_target,
-                hostname_encrypted_target,
+                host_encrypted_target,
                 self.url_info['target']['url'],
             )
         elif mode == 'decode':
             url = '%s://%s%s%s' % (
                 self.url_info['target']['protocol'],
-                hostname_target,
+                host_target,
                 port_target,
                 self.url_info['target']['url'],
             )
@@ -86,7 +86,7 @@ class WebvpnUrl:
     def __get_url_info_from_plain(self, url):
         self.url_info = copy.deepcopy(WebvpnUrl.URL_INFO)
 
-        self.url_info['webvpn']['hostname'] = self.INST_HOSTNAME
+        self.url_info['webvpn']['host'] = self.INST_HOST
 
         st1 = url.split('//')
         self.url_info['target']['protocol'] = st1[0][:-1]
@@ -100,16 +100,16 @@ class WebvpnUrl:
         self.url_info['target']['url'] = my_url
 
         if host.find(':') != -1:
-            hostname, port = host.split(':')
-            self.url_info['target']['hostname'] = hostname
+            host, port = host.split(':')
+            self.url_info['target']['host'] = host
             self.url_info['target']['port'] = port
         else:
-            self.url_info['target']['hostname'] = host
+            self.url_info['target']['host'] = host
 
     def __get_url_info_from_encrypted(self, url):
         self.url_info = copy.deepcopy(WebvpnUrl.URL_INFO)
 
-        self.url_info['webvpn']['hostname'] = self.INST_HOSTNAME
+        self.url_info['webvpn']['host'] = self.INST_HOST
 
         st1 = url.split('//')
         if st1[0] == '':
@@ -135,14 +135,14 @@ class WebvpnUrl:
             self.url_info['target']['protocol'] = st4
 
         st5 = st3[index2 + 1:]
-        hostname_encrypted_target = re.match('[0-9,a-f]*', st5).group(0)
-        my_url = st5[len(hostname_encrypted_target):]
+        host_encrypted_target = re.match('[0-9,a-f]*', st5).group(0)
+        my_url = st5[len(host_encrypted_target):]
         if my_url == '' or my_url[0] != '/':
             my_url = '/' + my_url
         self.url_info['target']['url'] = my_url
 
-        hostname_target = self.__decrypt(hostname_encrypted_target[WebvpnUrl.PREFIX_LEN:])
-        self.url_info['target']['hostname'] = hostname_target
+        host_target = self.__decrypt(host_encrypted_target[WebvpnUrl.PREFIX_LEN:])
+        self.url_info['target']['host'] = host_target
 
     def url_encode(self, url=''):
         if url != '':
