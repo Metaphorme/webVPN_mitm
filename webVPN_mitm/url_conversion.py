@@ -93,7 +93,7 @@ class WebvpnUrl:
         if st1[0] == 'ws:' or st1[0] == 'wss:':
             self.url_info['webvpn']['protocol'] = 'wss'
 
-        host = re.match('[0-9,a-z,A-Z,\.\-\:]*',st1[1]).group(0)
+        host = re.match('[0-9,a-z,A-Z,\.\-\:]*', st1[1]).group(0)
         my_url = st1[1][len(host):]
         if my_url == '' or my_url[0] != '/':
             my_url = '/' + my_url
@@ -157,11 +157,13 @@ class WebvpnUrl:
 
 if __name__ == '__main__':
     d = WebvpnUrl("webvpn.cpu.edu.cn")
+    # websocket 链接加密/解密
     print(d.url_encode("ws://1.1.1.1:8800"))
-    print(d.url_encode('https://www.maj-soul.com:443?query=value'))
     print(d.url_decode(d.url_encode("ws://1.1.1.1:8800")))
+    # HTTP/HTTPS 链接加密/解密
     print(d.url_decode("https://webvpn.cpu.edu.cn/https/77726476706e69737468656265737421e7e056d224207d1e7b0c9ce29b5b/"))
+    # 不合法 HTTP/HTTPS 加密链接自动补全
+    print(d.url_encode('https://www.maj-soul.com:443?query=value'))
+    # 相对路径解密
     print(d.url_decode(
         "//webvpn.cpu.edu.cn/https/77726476706e69737468656265737421e7e056d2253161546b468aa395/img/PCtm_d9c8750bed0b3c7d089fa7d55720d6cf.png"))
-
-    print(d.url_encode("https://cr8.197946.com/kmp64_4.2.2.69_cr173.com.exe"))
