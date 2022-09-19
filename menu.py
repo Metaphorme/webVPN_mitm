@@ -28,6 +28,9 @@ def write_cert():
     write_credentials(username=username, password=password, file_path='credentials.txt')
     print("已创建凭证文件 credentials.txt")
 
+    input("请按任意键继续...")
+    main()
+
 
 def verify_cert():
     from webVPN_mitm.cpu_webvpn import read_credentials
@@ -39,21 +42,32 @@ def verify_cert():
     my_cookie = login(username=username, password=password)
     print("获得 Cookie：{wengine_vpn_ticketwebvpn_cpu_edu_cn: " + my_cookie + "}")
 
+    input("请按任意键继续...")
+    main()
+
 
 def url_encode():
     from webVPN_mitm.url_conversion import WebvpnUrl
-    d = WebvpnUrl(inst_hostname="webvpn.cpu.edu.cn")
+    d = WebvpnUrl(inst_host="webvpn.cpu.edu.cn")
 
-    url = input("请输入待转换的普通url：")
-    print("URL_Encoded: " + d.url_encode(url))
+    try:
+        while True:
+            url = input("请输入待转换的普通url：")
+            print("URL_Encoded: " + d.url_encode(url))
+    except KeyboardInterrupt:
+        main()
 
 
 def url_decode():
     from webVPN_mitm.url_conversion import WebvpnUrl
     d = WebvpnUrl()
 
-    url = input("请输入webVPN 加密后的 URL：")
-    print("URL_Decoded: " + d.url_decode(url))
+    try:
+        while True:
+            url = input("请输入webVPN 加密后的 URL：")
+            print("URL_Decoded: " + d.url_decode(url))
+    except KeyboardInterrupt:
+        main()
 
 
 def get_cookie():
@@ -68,6 +82,9 @@ def get_cookie():
         print("正在尝试登录...")
         my_cookie = login(username=username, password=password)
         print("获得 Cookie：{wengine_vpn_ticketwebvpn_cpu_edu_cn: " + my_cookie + "}")
+
+        input("请按任意键继续...")
+        main()
 
 
 def start_http(port="8080"):
@@ -132,22 +149,16 @@ def main():
 
     if choose == "1":
         write_cert()
-        main()
     elif choose == "2":
         verify_cert()
-        main()
     elif choose == "3":
         url_encode()
-        main()
     elif choose == "4":
         url_decode()
-        main()
     elif choose == "5":
         get_cookie()
-        main()
     elif choose == "6":
         start_http()
-        main()
     else:
         print("输入不合法，将退出...")
         exit()
