@@ -26,8 +26,11 @@ class Modify:
         instCookie.logout(cookie=self.cookie)
         return None
 
-    def reformat(self, match: re.match) -> str:
+    def reformat_ap(self, match: re.match) -> str:
         return "//" + self.d.url_decode(match.group()[:-1]).split("//")[1] + '"'
+
+    def reformat_rp(self, match: re.match) -> str:
+        return '"/' + match.group().split("/")[-1]
 
     @concurrent
     def request(self, flow) -> None:
@@ -48,8 +51,13 @@ class Modify:
             self.__getCookie()
         else:
             content = re.sub(
-                pattern=r'\/\/webvpn\.cpu\.edu\.cn\/\S*"',
-                repl=self.reformat,
+                pattern=r'"\/\/webvpn\.cpu\.edu\.cn\/\S*"',
+                repl=self.reformat_ap,
+                string=content
+            )
+            content = re.sub(
+                pattern=r'"/https/\S*"',
+                repl=self.reformat_rp,
                 string=content
             )
             flow.response.set_text(content)
