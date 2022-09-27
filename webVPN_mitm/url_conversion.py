@@ -12,7 +12,7 @@ class WebvpnUrl:
     PREFIX_LEN = len(PREFIX)
     URL_INFO = {
         'webvpn': {
-            'protocol': 'https',
+            'protocol': '',
             'host': '',
             'port': '',
         },
@@ -92,6 +92,8 @@ class WebvpnUrl:
         self.url_info['target']['protocol'] = st1[0][:-1]
         if st1[0] == 'ws:' or st1[0] == 'wss:':
             self.url_info['webvpn']['protocol'] = 'wss'
+        else:
+            self.url_info['webvpn']['protocol'] = 'https'
 
         host = re.match('[0-9,a-z,A-Z,\.\-\:]*',st1[1]).group(0)
         my_url = st1[1][len(host):]
@@ -109,7 +111,34 @@ class WebvpnUrl:
     def __get_url_info_from_encrypted(self, url):
         self.url_info = copy.deepcopy(WebvpnUrl.URL_INFO)
 
-        self.url_info['webvpn']['host'] = self.INST_HOST
+        # self.url_info['webvpn']['host'] = self.INST_HOST
+
+        host_encrypted_target = re.search(WebvpnUrl.PREFIX + '[a-f,0-9]*', url).group(0)
+        host_target = self.__decrypt(host_encrypted_target[WebvpnUrl.PREFIX_LEN:])
+        self.url_info['target']['host'] = host_target
+
+        index0 = url.find(host_encrypted_target)
+        my_url = url[index0 + len(host_encrypted_target):]
+        if my_url == '' or my_url[0] != '/':
+            my_url = '/' + my_url
+        self.url_info['target']['url'] = my_url
+
+        # self.url_info['target']['protocol'] = re.search('/(.*)/' + WebvpnUrl.PREFIX,url).group(1)
+        protocol_port_target = re.search('/(.*)/' + WebvpnUrl.PREFIX, url).group(1)
+        index1 = protocol_port_target.find('-')
+        if index1 == -1:
+            protocol_port_target += '-'
+        protocol_target, port_target = protocol_port_target.split('-')
+        self.url_info['target']['protocol'] = protocol_target
+        self.url_info['target']['port'] = protocol_port
+
+
+        if url.find(self.INST_HOST) != -1:
+            self.url_info['webvpn']['host'] = self.INST_HOST
+
+        protocol_webvpn_match = re.match('(.*)://', url)
+        if protocol_webvpn_match is not None:
+            self.url_info['webvpn']['protocol'] = protocol_webvpn_match.group(1)
 
         st1 = url.split('//')
         if st1[0] == '':
