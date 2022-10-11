@@ -9,7 +9,7 @@ webVPN_mitm 是一个基于 [mitmproxy](https://mitmproxy.org) 的插件，实�
 1. [安装指南](#安装指南)
 2. [开始使用](#开始使用)
 3. [开发手册](#开发手册)
-4. [关于 webVPN 的安全性讨论](#关于 webVPN 的安全性讨论)
+4. [关于webVPN的安全性讨论](#关于webvpn的安全性讨论)
 5. [鸣谢](#鸣谢)
 
 **重要提醒：**
@@ -67,9 +67,9 @@ webVPN_mitm 是一个基于 [mitmproxy](https://mitmproxy.org) 的插件，实�
    
    如果你顺利看到了下图，那么恭喜🎉，你已经配置成功了！
 
-   [图]
+   ![menu](https://metaphorme.github.io/webVPN-mitm/img/menu.png)
    
-   **请注意，之后每次启动前都需要先激活虚拟环境。**
+   **请注意，之后每次启动前都需要激活虚拟环境。**
 
 
 ## 开始使用
@@ -80,7 +80,7 @@ webVPN_mitm 是一个基于 [mitmproxy](https://mitmproxy.org) 的插件，实�
 // To be continued
 
 
-## 关于 webVPN 的安全性讨论
+## 关于webvpn的安全性讨论
 // To be continued
 
 
