@@ -1,4 +1,4 @@
-# webVPN-mitm
+# webVPN_mitm
 
 webVPN_mitm, A Good Man In the Middle of You and webVPN.
 
@@ -20,7 +20,7 @@ webVPN_mitm 是一个基于 [mitmproxy](https://mitmproxy.org) 的插件，实�
 
 👀 在 webVPN 通道传输任意`最外层`基于 TLS 加密的数据对 webVPN 提供者是透明的，webVPN 提供者有能力对传输内容进行任意程度的审查或篡改；
 
-💊 本项目针对中国药科大学 webVPN 开发，理论上可适用于任何 webVPN 提供商，详见 [开发手册](#开发手册)、[关于 webVPN 的安全性讨论](#关于 webVPN 的安全性讨论)；
+💊 本项目针对中国药科大学 webVPN 开发，理论上可适用于任何 webVPN 提供商，详见 [开发手册](#开发手册)、[关于webVPN的安全性讨论](#关于webvpn的安全性讨论)；
 
 🐧 本指南中安装方法适用于 `Unix/macOS`，`Windows` 用户请按实际情况酌情修改。
 
@@ -38,15 +38,15 @@ webVPN_mitm 是一个基于 [mitmproxy](https://mitmproxy.org) 的插件，实�
    通过 git 获取：
 
    ```bash
-     git clone https://github.com/Metaphorme/webVPN-mitm.git
+     git clone https://github.com/Metaphorme/webVPN_mitm.git
    ```
     
-   或者直接下载 [zip 包](https://github.com/Metaphorme/webVPN-mitm/archive/refs/heads/master.zip)。
+   或者直接下载 [zip 包](https://github.com/Metaphorme/webVPN_mitm/archive/refs/heads/master.zip)。
     
    2.2 设置虚拟环境
 
    ```bash
-    cd webVPN-mitm                      # 进入项目目录
+    cd webVPN_mitm                      # 进入项目目录
     python3 -m venv env                 # 创建虚拟环境，请不要更改虚拟环境名
     source env/bin/activate             # 激活虚拟环境
    ```
@@ -67,7 +67,7 @@ webVPN_mitm 是一个基于 [mitmproxy](https://mitmproxy.org) 的插件，实�
    
    如果你顺利看到了下图，那么恭喜🎉，你已经配置成功了！
 
-   ![menu](https://metaphorme.github.io/webVPN-mitm/img/menu.png)
+   ![menu](https://metaphorme.github.io/webVPN_mitm/img/menu.png)
    
    **请注意，之后每次启动前都需要激活虚拟环境。**
 
