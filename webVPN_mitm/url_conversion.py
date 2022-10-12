@@ -48,6 +48,7 @@ class WebvpnUrl:
         return cfb_cipher_decrypt.decrypt(message).decode('utf-8')
 
     def __get_url(self, mode):
+        host_encrypted_target, url = None, None
         host_target = self.url_info['target']['host']
         if host_target != '' and mode == 'encode':
             host_encrypted_target = WebvpnUrl.PREFIX + self.__encrypt(host_target)
@@ -90,8 +91,10 @@ class WebvpnUrl:
 
         st1 = url.split('//')
         self.url_info['target']['protocol'] = st1[0][:-1]
-        if st1[0] == 'ws:' or st1[0] == 'wss:':
-            self.url_info['webvpn']['protocol'] = 'wss'
+        if st1[0] == '' or st1[0] == 'http:':
+            self.url_info['webvpn']['protocol'] = 'https'
+        else:
+            self.url_info['webvpn']['protocol'] = st1[0][:-1]
 
         host = re.match('[0-9,a-z,A-Z,\.\-\:]*', st1[1]).group(0)
         my_url = st1[1][len(host):]
@@ -157,13 +160,33 @@ class WebvpnUrl:
 
 if __name__ == '__main__':
     d = WebvpnUrl("webvpn.cpu.edu.cn")
-    # websocket 链接加密/解密
-    print(d.url_encode("ws://1.1.1.1:8800"))
-    print(d.url_decode(d.url_encode("ws://1.1.1.1:8800")))
-    # HTTP/HTTPS 链接加密/解密
-    print(d.url_decode("https://webvpn.cpu.edu.cn/https/77726476706e69737468656265737421e7e056d224207d1e7b0c9ce29b5b/"))
-    # 不合法 HTTP/HTTPS 加密链接自动补全
-    print(d.url_encode('https://www.maj-soul.com:443?query=value'))
-    # 相对路径解密
+    print("-----------调试-----------")
+    print("加密 http（为支持 webVPN，将升为 HTTPS）：")
+    print(d.url_encode("http://www.baidu.com"))
+    print("加密 ws：")
+    print(d.url_encode("ws://121.40.165.18:8800"))
+    print("加密 https：")
+    print(d.url_encode("https://www.baidu.com"))
+    print("加密 wss：")
+    print(d.url_encode("wss://121.40.165.18:8800"))
+    print()
+
+    print("解密 http：")
+    print(d.url_decode(d.url_encode("http://www.baidu.com")))
+    print("解密 ws：")
+    print(d.url_decode(d.url_encode("ws://121.40.165.18:8800")))
+    print("解密 https：")
+    print(d.url_decode(d.url_encode("https://www.baidu.com")))
+    print("解密 wss：")
+    print(d.url_decode(d.url_encode("wss://121.40.165.18:8800")))
+    print()
+
+    print("相对路径加密（将以 HTTPS 填充）：")
+    print(d.url_encode("//www.baidu.com/img/PCtm_d9c8750bed0b3c7d089fa7d55720d6cf.png"))
+    print("相对路径解密：")
     print(d.url_decode(
         "//webvpn.cpu.edu.cn/https/77726476706e69737468656265737421e7e056d2253161546b468aa395/img/PCtm_d9c8750bed0b3c7d089fa7d55720d6cf.png"))
+    print()
+
+    print("不合法 HTTP/HTTPS 加密链接自动补全：")
+    print(d.url_encode('https://www.maj-soul.com:443?query=value'))
