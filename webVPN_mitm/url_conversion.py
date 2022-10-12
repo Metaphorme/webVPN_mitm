@@ -91,8 +91,10 @@ class WebvpnUrl:
 
         st1 = url.split('//')
         self.url_info['target']['protocol'] = st1[0][:-1]
-        if st1[0] == 'ws:' or st1[0] == 'wss:':
-            self.url_info['webvpn']['protocol'] = 'wss'
+        if st1[0] == '' or st1[0] == 'http:':
+            self.url_info['webvpn']['protocol'] = 'https'
+        else:
+            self.url_info['webvpn']['protocol'] = st1[0][:-1]
 
         host = re.match('[0-9,a-z,A-Z,\.\-\:]*', st1[1]).group(0)
         my_url = st1[1][len(host):]
@@ -161,12 +163,12 @@ if __name__ == '__main__':
     print("-----------调试-----------")
     print("加密 http（为支持 webVPN，将升为 HTTPS）：")
     print(d.url_encode("http://www.baidu.com"))
-    print("加密 ws（为支持 webVPN，将升为 wss）：")
+    print("加密 ws：")
     print(d.url_encode("ws://121.40.165.18:8800"))
     print("加密 https：")
     print(d.url_encode("https://www.baidu.com"))
     print("加密 wss：")
-    print(d.url_encode("ws://121.40.165.18:8800"))
+    print(d.url_encode("wss://121.40.165.18:8800"))
     print()
 
     print("解密 http：")
